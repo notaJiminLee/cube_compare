@@ -30,11 +30,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-// #ifdef DEVICEFARM_INPUT_TYPE_INT
-//   typedef float INPUT_TYPE
-// #else
-//   typedef uint32_t INPUT_TYPE
-// #endif
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -148,6 +144,8 @@ int main(void)
   uint32_t init_time = __HAL_TIM_GET_COUNTER(&htim1);
 
   // Create instance of neural network
+  buf_len = sprintf(buf, "creating..\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t *)buf, buf_len, 100);
   ai_err = ai_network_create(&network, AI_NETWORK_DATA_CONFIG);
   if (ai_err.type != AI_ERROR_NONE)
   {
@@ -155,6 +153,8 @@ int main(void)
     HAL_UART_Transmit(&huart1, (uint8_t *)buf, buf_len, 100);
     while(1);
   }
+  buf_len = sprintf(buf, "created\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t *)buf, buf_len, 100);
 
   // Initialize neural network
   if (!ai_network_init(network, &ai_params))
@@ -164,10 +164,14 @@ int main(void)
     HAL_UART_Transmit(&huart1, (uint8_t *)buf, buf_len, 100);
     while(1);
   }
+  buf_len = sprintf(buf, "inited\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t *)buf, buf_len, 100);
 
   // Fill input buffer (use test value)
-  for(uint32_t i = 0; i < AI_NETWORK_IN_1_SIZE; i++)
+  for (uint32_t i = 0; i < AI_NETWORK_IN_1_SIZE; i++)
   {
+    buf_len = sprintf(buf, "%d, for..\r\n", i);
+    HAL_UART_Transmit(&huart1, (uint8_t *)buf, buf_len, 100);
     ((int8_t *)in_data)[i] = (int8_t)2;
   }
   init_time = __HAL_TIM_GET_COUNTER(&htim1) - init_time;
